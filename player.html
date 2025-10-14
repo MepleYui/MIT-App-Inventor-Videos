@@ -2,48 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simple Video Player</title>
+  <title>Raw Autoplay Video</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       background: #000;
+      height: 100%;
       display: flex;
-      align-items: center;
       justify-content: center;
-      height: 100vh;
+      align-items: center;
     }
 
     video {
       width: 100%;
-      max-width: 700px;
-      outline: none;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      pointer-events: none; /* Disable touch interactions */
     }
   </style>
 </head>
 <body>
 
-  <video id="player" controls>
-    <!-- Replace this with your own video file -->
-    <source src="video.mp4" type="video/mp4">
+  <video id="player" autoplay loop playsinline muted>
+    <!-- Replace with your own video -->
+    <source src="myvideo.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 
   <script>
-    // Expose simple control functions for MIT App Inventor
     const video = document.getElementById('player');
 
+    // Start playing immediately (some browsers need an explicit play)
+    window.addEventListener('load', () => {
+      video.play().catch(() => {});
+    });
+
+    // Optional: expose functions for MIT App Inventor to control speed or source
     window.setSpeed = function(rate) {
       video.playbackRate = rate;
-    };
-
-    window.playVideo = function() {
-      video.play();
-    };
-
-    window.pauseVideo = function() {
-      video.pause();
     };
 
     window.changeSource = function(src) {
