@@ -48,12 +48,16 @@
     });
 
     window.increaseSpeed = function() {
-      video.playbackRate += 0.25;
+      if (video.playbackRate < 2.0) {
+        video.playbackRate += 0.25;
+      } else {
+        changeSource('https://raw.githubusercontent.com/yourname/yourrepo/main/video2.mp4');
+      }
     };
 
     window.decreaseSpeed = function() {
-      if (video.playbackRate > 1) {
-        video.playbackRate -= 1;
+      if (video.playbackRate > 0.5) {
+        video.playbackRate -= 0.5;
       }
     };
 
@@ -61,7 +65,13 @@
       video.src = src;
       video.play();
     };
+    
+    window.resizeVideo = function(width, height) {
+      video.style.width = width;
+      video.style.height = height;
+    };
   </script>
 
 </body>
 </html>
+
