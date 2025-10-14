@@ -27,7 +27,6 @@
       transition: transform 0.2s ease;
     }
 
-    /* Optional loading screen */
     #loading {
       position: absolute;
       top: 0;
@@ -48,7 +47,8 @@
 
   <div id="loading">Loading...</div>
 
-  <video id="player" preload="auto" loop playsinline muted>
+  <!-- Removed loop attribute -->
+  <video id="player" preload="auto" playsinline muted>
     <source src="video2.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
@@ -57,12 +57,17 @@
     const video = document.getElementById('player');
     const loading = document.getElementById('loading');
 
-    // ⏳ Preload video and only play after buffered
+    // ✅ When video is ready, start playing
     video.addEventListener('canplaythrough', () => {
       loading.style.display = 'none';
       video.play();
+    });
+
+    // ✅ When video ends → pause & tell MIT to close
+    video.addEventListener('ended', () => {
+      video.pause();
       if (window.AppInventor) {
-        window.AppInventor.setWebViewString('ready');
+        window.AppInventor.setWebViewString('closeApp');
       }
     });
 
@@ -84,7 +89,7 @@
       video.play();
     };
 
-    // 🔍 Zoom: set zoom level directly
+    // 🔍 Zoom
     window.zoomVideo = function(level) {
       const scale = Math.max(1, parseFloat(level) || 1);
       video.style.transform = `scale(${scale})`;
