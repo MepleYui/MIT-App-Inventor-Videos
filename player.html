@@ -2,51 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Video Player</title>
+  <title>Raw Autoplay Video (Zoomable)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      background: black;
+      margin: 0; padding: 0;
+      background: #000;
       height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      overflow: hidden; /* hide overflow so scaled video is cropped */
     }
-
+    /* video fills container by default, uses contain so whole video shows */
     video {
       width: 100%;
-      height: auto;
+      height: 100%;
       max-width: 100%;
       max-height: 100%;
-      object-fit: cover;       /* makes the video fill the screen */
-      pointer-events: none;    /* disables pause/tap */
+      object-fit: contain;       /* default: show whole video */
+      pointer-events: none;      /* disable interactions if desired */
+      transform-origin: center center;
+      transition: transform 0.2s ease, object-fit 0.2s ease;
+      display: block;
     }
   </style>
 </head>
 <body>
 
-  <video id="player" preload="auto" autoplay loop playsinline muted>
-    <!-- Replace this with your video file name -->
+  <!-- put your local or repo filename here (same folder) -->
+  <video id="player" autoplay loop playsinline muted>
     <source src="video.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
 
   <script>
     const video = document.getElementById('player');
+    window.player = video;
 
-    // ✅ When video can play through without buffering, tell MIT App Inventor
-    video.addEventListener('canplaythrough', () => {
-      if (window.AppInventor) {
-        window.AppInventor.setWebViewString('ready');
-      }
+    // ensure play on load
+    window.addEventListener('load', () => {
+      video.play().catch(()=>{});
     });
 
-    // Expose helper functions for speed & source control
+    // Speed functions (keep as you had)
     window.increaseSpeed = function() {
-      video.playbackRate += 0.25;
+      if (video.playbackRate < 2.0) {
+        video.playbackRate += 0.25;
+      } else {
+        // example: switch source when threshold reached (adjust as needed)
+        changeSource('video2.mp4');
+        video.playbackRate = 1.0;
+      }
     };
 
     window.decreaseSpeed = function() {
@@ -55,16 +62,55 @@
       }
     };
 
+    // source switching
     window.changeSource = function(src) {
       video.src = src;
       video.load();
-      video.play();
+      video.play().catch(()=>{});
     };
 
-    // Try to play video on load (for autoplay enforcement)
-    window.addEventListener('load', () => {
-      video.play().catch(() => {});
-    });
+    // ----- ZOOM helpers -----
+    // mode 'cover' -> fills/crops the container (object-fit cover)
+    // mode 'scale' -> scale factor (e.g. 1.5) uses transform:scale
+    window.zoomVideo = function(scaleOrMode) {
+      // if string 'cover' or 'contain'
+      if (scaleOrMode === 'cover') {
+        // make the video fill and crop the container
+        video.style.transform = 'none';
+        video.style.objectFit = 'cover';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        return;
+      }
+      if (scaleOrMode === 'contain') {
+        video.style.transform = 'none';
+        video.style.objectFit = 'contain';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        return;
+      }
+      // otherwise assume numeric scale (e.g. 1.5)
+      let scale = Number(scaleOrMode) || 1;
+      // ensure overflow hidden on root so scaled edges are cropped
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      // keep object-fit contain so aspect ratio maintained; scale zooms in
+      video.style.objectFit = 'contain';
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.transform = 'scale(' + scale + ')';
+      video.style.transformOrigin = 'center center';
+    };
+
+    window.resetZoom = function() {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      video.style.transform = 'none';
+      video.style.objectFit = 'contain';
+      video.style.width = '100%';
+      video.style.height = '100%';
+    };
+    // -------------------------
   </script>
 
 </body>
