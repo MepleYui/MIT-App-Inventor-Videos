@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Video Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    video {
+      width: 100%;
+      max-width: 700px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+  <video id="player" controls>
+    <!-- Replace this with your own video file -->
+    <source src="video.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <script>
+    // Expose simple control functions for MIT App Inventor
+    const video = document.getElementById('player');
+
+    window.setSpeed = function(rate) {
+      video.playbackRate = rate;
+    };
+
+    window.playVideo = function() {
+      video.play();
+    };
+
+    window.pauseVideo = function() {
+      video.pause();
+    };
+
+    window.changeSource = function(src) {
+      video.src = src;
+      video.play();
+    };
+  </script>
+
+</body>
+</html>
