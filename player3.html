@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fullscreen Video</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background: black;
+      overflow: hidden;
+    }
+
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+  <video id="vid" src="video3.mp4" muted loop playsinline></video>
+
+  <script>
+    const video = document.getElementById('vid');
+
+    // Attempt to autoplay
+    function tryPlay() {
+      video.play().catch(() => {
+        // Some WebViews still block autoplay, so wait for user interaction
+        document.addEventListener('touchstart', playOnTouch, { once: true });
+        document.addEventListener('click', playOnTouch, { once: true });
+      });
+    }
+
+    function playOnTouch() {
+      video.play();
+    }
+
+    // Try autoplay after small delay for WebView init
+    window.addEventListener('load', () => {
+      setTimeout(tryPlay, 200);
+    });
+
+    // Optional App Inventor integration
+    if (window.AppInventor) {
+      window.AppInventor.setWebViewString('ready');
+    }
+  </script>
+</body>
+</html>
