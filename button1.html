@@ -14,7 +14,7 @@
       overflow: hidden;
       -webkit-tap-highlight-color: transparent;
     }
-    
+
     img {
       position: fixed;
       top: 0;
@@ -24,7 +24,6 @@
       object-fit: cover;
       background: black;
       opacity: 0;
-      animation: fadeIn 2s ease forwards;
       filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
@@ -32,30 +31,31 @@
       -webkit-user-select: none;
       user-select: none;
     }
-    
+
+    /* Run this only once on load */
+    img.fade-in {
+      animation: fadeIn 2s ease forwards;
+    }
+
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-    
+
     @keyframes shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-1px, -2px) rotate(-1deg); }
-    20% { transform: translate(-3px, 0px) rotate(1deg); }
-    30% { transform: translate(3px, 2px) rotate(0deg); }
-    40% { transform: translate(1px, -1px) rotate(1deg); }
-    50% { transform: translate(-1px, 2px) rotate(-1deg); }
-    60% { transform: translate(-3px, 1px) rotate(0deg); }
-    70% { transform: translate(3px, 1px) rotate(-1deg); }
-    80% { transform: translate(-1px, -1px) rotate(1deg); }
-    90% { transform: translate(1px, 2px) rotate(0deg); }
-    100% { transform: translate(1px, -2px) rotate(-1deg); }
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
     }
-    
+
     img.shake {
       animation: shake 0.3s ease;
     }
@@ -65,36 +65,35 @@
   <img id="img" alt="Fullscreen Image">
   <script>
     let currentImageName = '';
-    
-    // Function to change the image
+
     function setImage(imageName) {
       const img = document.getElementById('img');
       img.src = 'assets/' + imageName + '.png';
       currentImageName = imageName;
+
+      // Reset fade-in each time image changes
+      img.classList.remove('fade-in');
+      void img.offsetWidth; // force reflow
+      img.classList.add('fade-in');
     }
-    
-    // Check for URL parameter immediately (before load event)
+
     const params = new URLSearchParams(window.location.search);
     const imageName = params.get('image');
     if (imageName) {
       setImage(imageName);
     } else {
-      // Fallback to default if no parameter provided
       setImage('1-locked');
     }
-    
-    // Make image clickable
+
     const img = document.getElementById('img');
     img.addEventListener('click', () => {
       if (window.AppInventor) {
-        // Check if image is locked or unlocked
         if (currentImageName.includes('locked')) {
-          // Add shake animation only for locked images
+          // Add shake animation
+          img.classList.remove('shake');
+          void img.offsetWidth; // force reflow so shake restarts
           img.classList.add('shake');
-          setTimeout(() => {
-            img.classList.remove('shake');
-          }, 300);
-          
+
           window.AppInventor.setWebViewString('locked-clicked');
         } else if (currentImageName.includes('unlocked')) {
           const number = currentImageName.split('-')[0];
@@ -102,8 +101,7 @@
         }
       }
     });
-    
-    // Optional App Inventor integration
+
     if (window.AppInventor) {
       window.AppInventor.setWebViewString('ready');
     }
