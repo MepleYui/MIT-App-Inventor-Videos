@@ -23,7 +23,8 @@
       object-fit: cover;
       background: black;
       opacity: 0;
-      animation: fadeIn 0.5s ease forwards;
+      animation: fadeIn 2s ease forwards;
+      filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
     }
     
     @keyframes fadeIn {
@@ -33,11 +34,6 @@
       to {
         opacity: 1;
       }
-    }
-    
-    /* Optional: Add a subtle glow effect */
-    img.glow {
-      box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
@@ -59,12 +55,6 @@
       // Fallback to default if no parameter provided
       setImage('1-locked');
     }
-
-    // Optional: Add glow effect when image loads
-    const img = document.getElementById('img');
-    img.addEventListener('load', () => {
-      img.classList.add('glow');
-    });
 
     // Optional App Inventor integration
     if (window.AppInventor) {
