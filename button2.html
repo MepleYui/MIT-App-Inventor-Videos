@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Animated Button</title>
+  <title>Fullscreen Image</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -12,97 +12,64 @@
       width: 100%;
       background: black;
       overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
     
-    .button {
-      width: 100vw;
-      height: 100vh;
-      font-size: 48px;
-      font-weight: bold;
-      color: white;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none;
-      border-radius: 0;
-      cursor: pointer;
-      box-shadow: none;
-      transition: all 0.3s ease;
+    img {
       position: fixed;
       top: 0;
       left: 0;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      background: black;
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
     }
     
-    .button::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-    
-    .button:hover {
-      background: linear-gradient(135deg, #7c8ffc 0%, #8a5bb8 100%);
-    }
-    
-    .button:active {
-      background: linear-gradient(135deg, #5568d3 0%, #63408e 100%);
-    }
-    
-    .button:active::before {
-      width: 300px;
-      height: 300px;
-    }
-    
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
       }
-      50% {
-        transform: scale(1.05);
+      to {
+        opacity: 1;
       }
     }
     
-    .button.pulse {
-      animation: pulse 2s infinite;
+    /* Optional: Add a subtle glow effect */
+    img.glow {
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
 <body>
-  <button class="button" id="btn">Click Me!</button>
-  
+  <img id="img" alt="Fullscreen Image">
   <script>
-    const button = document.getElementById('btn');
-    
-    // Function to handle button click
-    button.addEventListener('click', function() {
-      // Send signal to App Inventor if available
-      if (window.AppInventor) {
-        window.AppInventor.setWebViewString('button_clicked');
-      }
-      
-      console.log('Button clicked!');
+    // Function to change the image
+    function setImage(imageName) {
+      const img = document.getElementById('img');
+      img.src = 'assets/' + imageName + '.png';
+    }
+
+    // Check for URL parameter immediately (before load event)
+    const params = new URLSearchParams(window.location.search);
+    const imageName = params.get('image');
+    if (imageName) {
+      setImage(imageName);
+    } else {
+      // Fallback to default if no parameter provided
+      setImage('1-locked');
+    }
+
+    // Optional: Add glow effect when image loads
+    const img = document.getElementById('img');
+    img.addEventListener('load', () => {
+      img.classList.add('glow');
     });
-    
-    // Optional: Add pulse animation on load
-    window.addEventListener('load', () => {
-      button.classList.add('pulse');
-      
-      // Remove pulse after 6 seconds
-      setTimeout(() => {
-        button.classList.remove('pulse');
-      }, 6000);
-    });
+
+    // Optional App Inventor integration
+    if (window.AppInventor) {
+      window.AppInventor.setWebViewString('ready');
+    }
   </script>
 </body>
 </html>
