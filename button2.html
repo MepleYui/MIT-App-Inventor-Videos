@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animated Button</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background: black;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .button {
+      padding: 20px 40px;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+    }
+    
+    .button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .button:active::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+    
+    .button.pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body>
+  <button class="button" id="btn">Click Me!</button>
+  
+  <script>
+    const button = document.getElementById('btn');
+    
+    // Function to handle button click
+    button.addEventListener('click', function() {
+      // Send signal to App Inventor if available
+      if (window.AppInventor) {
+        window.AppInventor.setWebViewString('button_clicked');
+      }
+      
+      console.log('Button clicked!');
+    });
+    
+    // Optional: Add pulse animation on load
+    window.addEventListener('load', () => {
+      button.classList.add('pulse');
+      
+      // Remove pulse after 6 seconds
+      setTimeout(() => {
+        button.classList.remove('pulse');
+      }, 6000);
+    });
+  </script>
+</body>
+</html>
