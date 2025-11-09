@@ -25,6 +25,7 @@
       opacity: 0;
       animation: fadeIn 2s ease forwards;
       filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+      cursor: pointer;
     }
     
     @keyframes fadeIn {
@@ -40,12 +41,15 @@
 <body>
   <img id="img" alt="Fullscreen Image">
   <script>
+    let currentImageName = '';
+    
     // Function to change the image
     function setImage(imageName) {
       const img = document.getElementById('img');
       img.src = 'assets/' + imageName + '.png';
+      currentImageName = imageName;
     }
-
+    
     // Check for URL parameter immediately (before load event)
     const params = new URLSearchParams(window.location.search);
     const imageName = params.get('image');
@@ -55,7 +59,22 @@
       // Fallback to default if no parameter provided
       setImage('1-locked');
     }
-
+    
+    // Make image clickable
+    const img = document.getElementById('img');
+    img.addEventListener('click', () => {
+      if (window.AppInventor) {
+        // Check if image is locked or unlocked
+        if (currentImageName.includes('locked')) {
+          window.AppInventor.setWebViewString('locked-clicked');
+        } else if (currentImageName.includes('unlocked')) {
+          // Extract the number from the image name (e.g., "3-unlocked" -> "3")
+          const number = currentImageName.split('-')[0];
+          window.AppInventor.setWebViewString(number + '-unlocked-clicked');
+        }
+      }
+    });
+    
     // Optional App Inventor integration
     if (window.AppInventor) {
       window.AppInventor.setWebViewString('ready');
