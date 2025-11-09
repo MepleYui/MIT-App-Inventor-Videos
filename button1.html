@@ -27,6 +27,21 @@
 <body>
   <img id="img" src="assets/1-locked.png" alt="Fullscreen Image">
   <script>
+    // Function to change the image
+    function setImage(imageName) {
+      const img = document.getElementById('img');
+      img.src = 'assets/' + imageName + '.png';
+    }
+
+    // Check for URL parameter on load
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      const imageName = params.get('image');
+      if (imageName) {
+        setImage(imageName);
+      }
+    });
+
     // Optional App Inventor integration
     if (window.AppInventor) {
       window.AppInventor.setWebViewString('ready');
