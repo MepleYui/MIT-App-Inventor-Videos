@@ -23,25 +23,17 @@
       height: 100vh;
       object-fit: cover;
       background: black;
-      opacity: 0;
+      opacity: 1; /* Always visible (no fade-in) */
       filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
+      transition: transform 0.1s; /* Slight smoothing when not shaking */
     }
 
-    /* Run this only once on load */
-    img.fade-in {
-      animation: fadeIn 2s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
+    /* Shake animation only runs when the class is added */
     @keyframes shake {
       0% { transform: translate(1px, 1px) rotate(0deg); }
       10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -70,34 +62,31 @@
       const img = document.getElementById('img');
       img.src = 'assets/' + imageName + '.png';
       currentImageName = imageName;
-
-      // Reset fade-in each time image changes
-      img.classList.remove('fade-in');
-      void img.offsetWidth; // force reflow
-      img.classList.add('fade-in');
     }
 
+    // Get image name from URL (fallback to 1-locked)
     const params = new URLSearchParams(window.location.search);
-    const imageName = params.get('image');
-    if (imageName) {
-      setImage(imageName);
-    } else {
-      setImage('1-locked');
-    }
+    const imageName = params.get('image') || '1-locked';
+    setImage(imageName);
 
     const img = document.getElementById('img');
     img.addEventListener('click', () => {
       if (window.AppInventor) {
         if (currentImageName.includes('locked')) {
-          // Add shake animation
-          img.classList.remove('shake');
-          void img.offsetWidth; // force reflow so shake restarts
+          // Shake only when locked
           img.classList.add('shake');
-
+          setTimeout(() => img.classList.remove('shake'), 300);
           window.AppInventor.setWebViewString('locked-clicked');
         } else if (currentImageName.includes('unlocked')) {
           const number = currentImageName.split('-')[0];
           window.AppInventor.setWebViewString(number + '-unlocked-clicked');
+        }
+      } else {
+        // For testing without App Inventor
+        if (currentImageName.includes('locked')) {
+          img.classList.add('shake');
+          setTimeout(() => img.classList.remove('shake'), 300);
+          console.log('locked-clicked');
         }
       }
     });
